@@ -24,7 +24,7 @@ class MessageWidget extends StatelessWidget {
       ),
       child: Column(
         children: [
-          if (email != null) ...[
+          if (email != null)
             Padding(
               padding: const EdgeInsets.only(top: 4),
               child: Align(
@@ -35,7 +35,6 @@ class MessageWidget extends StatelessWidget {
                 ),
               ),
             ),
-          ],
           Container(
             decoration: BoxDecoration(boxShadow: [
               BoxShadow(

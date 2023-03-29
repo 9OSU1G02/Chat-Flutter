@@ -1,5 +1,11 @@
+import 'package:chat_flutter/data/user_dao.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../data/message.dart';
+import '../data/message_dao.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'message_widget.dart';
 
 class MessageList extends StatefulWidget {
   const MessageList({Key? key}) : super(key: key);
@@ -11,26 +17,32 @@ class MessageList extends StatefulWidget {
 class MessageListState extends State<MessageList> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  // TODO: Add Email String
+  String? email;
 
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
-    // TODO: Add MessageDao
+    final messageDao = Provider.of<MessageDao>(context, listen: false);
 
-    // TODO: Add UserDao
-
+    final userDao = Provider.of<UserDao>(context, listen: false);
+    email = userDao.userEmail();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('RayChat'),
-        // TODO: Replace with actions
+        title: const Text('Flutter Chat'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              userDao.logout();
+            },
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // TODO: Add Message DAO to _getMessageList
-            _getMessageList(),
+            _getMessageList(messageDao),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -41,8 +53,7 @@ class MessageListState extends State<MessageList> {
                       keyboardType: TextInputType.text,
                       controller: _messageController,
                       onSubmitted: (input) {
-                        // TODO: Add Message DAO 1
-                        _sendMessage();
+                        _sendMessage(messageDao);
                       },
                       decoration:
                           const InputDecoration(hintText: 'Enter new message'),
@@ -56,8 +67,7 @@ class MessageListState extends State<MessageList> {
                         : CupertinoIcons.arrow_right_circle,
                   ),
                   onPressed: () {
-                    // TODO: Add Message DAO 2
-                    _sendMessage();
+                    _sendMessage(messageDao);
                   },
                 )
               ],
@@ -68,17 +78,49 @@ class MessageListState extends State<MessageList> {
     );
   }
 
-  // TODO: Replace _sendMessage
-  void _sendMessage() {}
-
-  // TODO: Replace _getMessageList
-  Widget _getMessageList() {
-    return const SizedBox.shrink();
+  void _sendMessage(MessageDao messageDao) {
+    if (_canSendMessage()) {
+      final message = Message(
+          text: _messageController.text, date: DateTime.now(), email: email);
+      messageDao.saveMessage(message);
+      _messageController.clear();
+      setState(() {});
+    }
   }
 
-  // TODO: Add _buildList
+  Widget _getMessageList(MessageDao messageDao) {
+    return Expanded(
+      child: StreamBuilder<QuerySnapshot>(
+        stream: messageDao.getMessageStream(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: LinearProgressIndicator());
+          }
 
-  // TODO: Add _buildListItem
+          return _buildList(context, snapshot.data!.docs);
+        },
+      ),
+    );
+  }
+
+  Widget _buildList(BuildContext context, List<DocumentSnapshot>? snapshot) {
+    return ListView(
+      controller: _scrollController,
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.only(top: 20.0),
+      children: snapshot!.map((data) => _buildListItem(context, data)).toList(),
+    );
+  }
+
+  Widget _buildListItem(BuildContext context, DocumentSnapshot snapshot) {
+    final message = Message.fromSnapshot(snapshot);
+
+    return MessageWidget(
+      message.text,
+      message.date,
+      message.email,
+    );
+  }
 
   bool _canSendMessage() => _messageController.text.isNotEmpty;
 
