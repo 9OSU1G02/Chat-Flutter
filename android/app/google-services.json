@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "288916018957",
+    "firebase_url": "https://messageapp-3b4b5.firebaseio.com",
+    "project_id": "messageapp-3b4b5",
+    "storage_bucket": "messageapp-3b4b5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:288916018957:android:b133edf18fd685423cc244",
+        "android_client_info": {
+          "package_name": "com.GOSU1902.chatFlutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "288916018957-145dmovdqgfamj5kul75dg85ujg3bdj7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC24XLBfMOb2PPeSyTy8uWVUf3uCGL6PvE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "288916018957-145dmovdqgfamj5kul75dg85ujg3bdj7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "288916018957-uq9g3u9t0gdomvuri2mcg75f04deusol.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.huyquocnguyen1902.Message-App"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
